@@ -163,7 +163,16 @@ class BedrockWorldData extends BaseNbtWorldData{
 			throw new CorruptedWorldException(sprintf("Missing '%s' tag in level.dat", self::TAG_NETWORK_VERSION));
 		}
 		if($protocolVersion > self::CURRENT_STORAGE_NETWORK_VERSION){
-			throw new UnsupportedWorldFormatException("LevelDB world protocol version $protocolVersion is currently unsupported");
+			$this->logger?->warning(
+				"LevelDB world NetworkVersion $protocolVersion is newer than supported " .
+				self::CURRENT_STORAGE_NETWORK_VERSION . "; loading anyway. " .
+				"Some new blocks/items may not be recognised until BetterLite is updated."
+			);
+		}elseif($protocolVersion < self::CURRENT_STORAGE_NETWORK_VERSION){
+			$this->logger?->info(
+				"LevelDB world NetworkVersion $protocolVersion is older than current " .
+				self::CURRENT_STORAGE_NETWORK_VERSION . "; world will be upgraded on next save."
+			);
 		}
 
 		return $worldData;

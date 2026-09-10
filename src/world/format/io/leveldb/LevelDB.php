@@ -120,7 +120,7 @@ class LevelDB extends BaseWorldProvider implements WritableWorldProvider{
 	}
 
 	protected function loadLevelData() : WorldData{
-		return new BedrockWorldData(Path::join($this->getPath(), "level.dat"));
+		return new BedrockWorldData(Path::join($this->getPath(), "level.dat"), $this->logger);
 	}
 
 	public function getWorldMinY() : int{
