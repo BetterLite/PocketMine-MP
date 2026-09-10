@@ -11,7 +11,7 @@
 <p align="center">
 	<a href="https://github.com/betterlite/PocketMine-MP/actions/workflows/main.yml"><img src="https://github.com/betterlite/PocketMine-MP/actions/workflows/main.yml/badge.svg" alt="CI" /></a>
 	<a href="https://github.com/betterlite/PocketMine-MP/releases/latest"><img alt="GitHub release (latest SemVer)" src="https://img.shields.io/github/v/release/betterlite/PocketMine-MP?label=release&sort=semver"></a>
-	<a href="https://discord.gg/vrPugybpJF"><img src="https://img.shields.io/discord/1526008653482692768?label=discord&color=7289DA&logo=discord" alt="Discord" /></a>
+	<a href="https://discord.gg/mXTeUZjJKW"><img src="https://img.shields.io/discord/1526008653482692768?label=discord&color=7289DA&logo=discord" alt="Discord" /></a>
 	<br>
 	<a href="https://github.com/betterlite/PocketMine-MP/releases"><img alt="GitHub all releases" src="https://img.shields.io/github/downloads/betterlite/PocketMine-MP/total?label=downloads%40total"></a>
 	<a href="https://github.com/betterlite/PocketMine-MP/releases/latest"><img alt="GitHub release (latest by SemVer)" src="https://img.shields.io/github/downloads/betterlite/PocketMine-MP/latest/total?sort=semver"></a>
