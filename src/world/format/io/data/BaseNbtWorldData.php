@@ -43,13 +43,17 @@ abstract class BaseNbtWorldData implements WorldData{
 
 	protected CompoundTag $compoundTag;
 
+	protected ?\Logger $logger = null;
+
 	/**
 	 * @throws CorruptedWorldException
 	 * @throws UnsupportedWorldFormatException
 	 */
 	public function __construct(
-		protected string $dataPath
+		protected string $dataPath,
+		?\Logger $logger = null
 	){
+		$this->logger = $logger;
 		if(!file_exists($this->dataPath)){
 			throw new CorruptedWorldException("World data not found at $dataPath");
 		}
