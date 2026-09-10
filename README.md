@@ -1,3 +1,7 @@
+
+<p align="center">
+	<img width="2048" height="328" alt="BetterLite" src="https://github.com/user-attachments/assets/67dba4fb-69b8-4bed-82eb-d863eaf6c189" />
+</p>
 <p align="center">
 	<a href="https://github.com/betterlite/PocketMine-MP">
 		<picture>
