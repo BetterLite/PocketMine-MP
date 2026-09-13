@@ -1100,15 +1100,24 @@ class NetworkSession{
 	}
 
 	public function syncGameMode(GameMode $mode, bool $isRollback = false) : void{
-		$this->sendDataPacket(SetPlayerGameTypePacket::create($this->typeConverter->coreGameModeToProtocol($mode)));
-		if($this->player !== null){
-			$this->syncAbilities($this->player);
-			$this->syncAdventureSettings(); //TODO: we might be able to do this with the abilities packet alone
-		}
-		if(!$isRollback && $this->invManager !== null){
-			$this->invManager->syncCreative();
+	$this->sendDataPacket(SetPlayerGameTypePacket::create($this->typeConverter->coreGameModeToProtocol($mode)));
+
+	if($this->player !== null){
+		$this->syncAbilities($this->player);
+		$this->syncAdventureSettings(); //TODO: we might be able to do this with the abilities packet alone
+
+		$attributes = $this->player->getAttributeMap()->getAll();
+		$this->entityEventBroadcaster->syncAttributes([$this], $this->player, $attributes);
+
+		foreach($attributes as $attribute){
+			$attribute->markSynchronized();
 		}
 	}
+
+	if(!$isRollback && $this->invManager !== null){
+		$this->invManager->syncCreative();
+	}
+}
 
 	public function syncAbilities(Player $for) : void{
 		$isOp = $for->hasPermission(DefaultPermissions::ROOT_OPERATOR);
