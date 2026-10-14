@@ -75,6 +75,8 @@ use function array_filter;
 use function array_key_exists;
 use function array_merge;
 use function array_values;
+use function is_finite;
+use function max;
 use function min;
 
 class Human extends Living implements ProjectileSource, InventoryHolder{
@@ -345,10 +347,12 @@ class Human extends Living implements ProjectileSource, InventoryHolder{
 			fn(EntityEventBroadcaster $broadcaster, array $recipients) => $broadcaster->onMobMainHandItemChange($recipients, $this)
 		));
 
-		$this->hungerManager->setFood((float) $nbt->getInt(self::TAG_FOOD_LEVEL, (int) $this->hungerManager->getFood()));
-		$this->hungerManager->setExhaustion($nbt->getFloat(self::TAG_FOOD_EXHAUSTION_LEVEL, $this->hungerManager->getExhaustion()));
-		$this->hungerManager->setSaturation($nbt->getFloat(self::TAG_FOOD_SATURATION_LEVEL, $this->hungerManager->getSaturation()));
-		$this->hungerManager->setFoodTickTimer($nbt->getInt(self::TAG_FOOD_TICK_TIMER, $this->hungerManager->getFoodTickTimer()));
+		$this->hungerManager->setFood((float) min(max($nbt->getInt(self::TAG_FOOD_LEVEL, (int) $this->hungerManager->getFood()), 0), 20));
+		$exhaustion = $nbt->getFloat(self::TAG_FOOD_EXHAUSTION_LEVEL, $this->hungerManager->getExhaustion());
+		$this->hungerManager->setExhaustion(is_finite($exhaustion) ? min(max($exhaustion, 0.0), 4.0) : 0.0);
+		$saturation = $nbt->getFloat(self::TAG_FOOD_SATURATION_LEVEL, $this->hungerManager->getSaturation());
+		$this->hungerManager->setSaturation(is_finite($saturation) ? min(max($saturation, 0.0), 20.0) : 0.0);
+		$this->hungerManager->setFoodTickTimer(min(max($nbt->getInt(self::TAG_FOOD_TICK_TIMER, $this->hungerManager->getFoodTickTimer()), 0), 79));
 
 		$this->xpManager->setXpAndProgressNoEvent(
 			$nbt->getInt(self::TAG_XP_LEVEL, 0),

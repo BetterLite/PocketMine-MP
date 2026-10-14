@@ -50,9 +50,12 @@ class FarmlandHydrationChangeEvent extends BlockEvent implements Cancellable{
 		return $this->newHydration;
 	}
 
+	/**
+	 * Sets the new hydration. -1 means that dry farmland will revert to dirt.
+	 */
 	public function setNewHydration(int $hydration) : void{
-		if($hydration < 0 || $hydration > Farmland::MAX_WETNESS){
-			throw new \InvalidArgumentException("Hydration must be in range 0 ... " . Farmland::MAX_WETNESS);
+		if($hydration < -1 || $hydration > Farmland::MAX_WETNESS){
+			throw new \InvalidArgumentException("Hydration must be in range -1 ... " . Farmland::MAX_WETNESS);
 		}
 		$this->newHydration = $hydration;
 	}

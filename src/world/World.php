@@ -962,6 +962,9 @@ class World implements ChunkManager{
 	}
 
 	protected function actuallyDoTick(int $currentTick) : void{
+		//External chunk locks may have delayed population requests without any active generation task to trigger queue drainage.
+		$this->drainPopulationRequestQueue();
+
 		if(!$this->stopTime){
 			//this simulates an overflow, as would happen in any language which doesn't do stupid things to var types
 			if($this->time === PHP_INT_MAX){
@@ -2313,6 +2316,10 @@ class World implements ChunkManager{
 
 			$ev->call();
 			if(!$ev->isCancelled()){
+				// Plugins may have changed the clicked/replace block while handling PlayerInteractEvent.
+				// Don't invoke behavior on a stale block instance (e.g. a sign whose tile was removed).
+				$blockClicked = $this->getBlock($blockClicked->getPosition());
+				$blockReplace = $this->getBlock($blockReplace->getPosition());
 				if($ev->useBlock() && $blockClicked->onInteract($item, $face, $clickVector, $player, $returnedItems)){
 					return true;
 				}
@@ -2390,7 +2397,12 @@ class World implements ChunkManager{
 			$tile = $this->getTileAt($x, $y, $z);
 			if($tile !== null){
 				//TODO: seal this up inside block placement
-				$tile->copyDataFromItem($item);
+				try{
+					$tile->copyDataFromItem($item);
+				}catch(\pocketmine\nbt\NbtDataException|\InvalidArgumentException $e){
+					$this->logger->error("Invalid custom tile data on placed item: " . $e->getMessage());
+					$tile->close();
+				}
 			}
 
 			$placed = $this->getBlockAt($x, $y, $z);
@@ -3086,10 +3098,16 @@ class World implements ChunkManager{
 				$tilePosition = $tile->getPosition();
 				if(!$this->isChunkLoaded($tilePosition->getFloorX() >> Chunk::COORD_BIT_SIZE, $tilePosition->getFloorZ() >> Chunk::COORD_BIT_SIZE)){
 					$logger->error("Found tile saved on wrong chunk - unable to fix due to correct chunk not loaded");
+					$tile->close();
+					continue;
 				}elseif(!$this->isInWorld($tilePosition->getFloorX(), $tilePosition->getFloorY(), $tilePosition->getFloorZ())){
 					$logger->error("Cannot add tile with position outside the world bounds: x=$tilePosition->x,y=$tilePosition->y,z=$tilePosition->z");
+					$tile->close();
+					continue;
 				}elseif($this->getTile($tilePosition) !== null){
 					$logger->error("Cannot add tile at x=$tilePosition->x,y=$tilePosition->y,z=$tilePosition->z: Another tile is already at that position");
+					$tile->close();
+					continue;
 				}else{
 					$this->addTile($tile);
 				}

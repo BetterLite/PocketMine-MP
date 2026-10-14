@@ -208,7 +208,10 @@ class Chunk{
 
 	public function removeTile(Tile $tile) : void{
 		$pos = $tile->getPosition();
-		unset($this->tiles[Chunk::blockHash($pos->x, $pos->y, $pos->z)]);
+		$index = Chunk::blockHash($pos->x, $pos->y, $pos->z);
+		if(($this->tiles[$index] ?? null) === $tile){
+			unset($this->tiles[$index]);
+		}
 	}
 
 	/**

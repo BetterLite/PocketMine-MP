@@ -2039,7 +2039,7 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer, Nev
 		foreach($meleeEnchantments as $enchantment){
 			$type = $enchantment->getType();
 			assert($type instanceof MeleeWeaponEnchantment);
-			$type->onPostAttack($this, $entity, $enchantment->getLevel());
+			$type->onPostAttackWithDamageEvent($ev, $this, $entity, $enchantment->getLevel());
 		}
 
 		if($this->isAlive()){

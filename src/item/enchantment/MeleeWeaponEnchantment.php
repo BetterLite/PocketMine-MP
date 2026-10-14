@@ -24,6 +24,7 @@ declare(strict_types=1);
 namespace pocketmine\item\enchantment;
 
 use pocketmine\entity\Entity;
+use pocketmine\event\entity\EntityDamageByEntityEvent;
 
 /**
  * Classes extending this class can be applied to weapons and activate when used by a mob to attack another mob in melee
@@ -47,5 +48,12 @@ abstract class MeleeWeaponEnchantment extends Enchantment{
 	 */
 	public function onPostAttack(Entity $attacker, Entity $victim, int $enchantmentLevel) : void{
 
+	}
+
+	/**
+	 * Called after an entity attack, with access to the damage event and its final plugin-modified values.
+	 */
+	public function onPostAttackWithDamageEvent(EntityDamageByEntityEvent $event, Entity $attacker, Entity $victim, int $enchantmentLevel) : void{
+		$this->onPostAttack($attacker, $victim, $enchantmentLevel);
 	}
 }

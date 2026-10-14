@@ -60,7 +60,7 @@ abstract class Timezone{
 
 	public static function init() : void{
 		$timezone = Utils::assumeNotFalse(ini_get("date.timezone"), "date.timezone should always be set in ini");
-		if($timezone !== ""){
+		if($timezone !== "" && $timezone !== "UTC"){
 			/*
 			 * This is here so that people don't come to us complaining and fill up the issue tracker when they put
 			 * an incorrect timezone abbreviation in php.ini apparently.

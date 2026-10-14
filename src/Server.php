@@ -1277,12 +1277,19 @@ class Server{
 			$this->logger->info($this->language->translate(KnownTranslationFactory::pocketmine_server_networkStart($prettyIp, (string) $port)));
 		}
 		if($useQuery){
+			$queryRegistered = $rakLibRegistered;
 			if(!$rakLibRegistered){
 				//RakLib would normally handle the transport for Query packets
 				//if it's not registered we need to make sure Query still works
-				$this->network->registerInterface(new DedicatedQueryNetworkInterface($ip, $port, $ipV6, new \PrefixedLogger($this->logger, "Dedicated Query Interface")));
+				try{
+					$queryRegistered = $this->network->registerInterface(new DedicatedQueryNetworkInterface($ip, $port, $ipV6, new \PrefixedLogger($this->logger, "Dedicated Query Interface")));
+				}catch(NetworkInterfaceStartException $e){
+					$this->logger->warning("Failed to start dedicated Query interface: " . $e->getMessage());
+				}
 			}
-			$this->logger->info($this->language->translate(KnownTranslationFactory::pocketmine_server_query_running($prettyIp, (string) $port)));
+			if($queryRegistered){
+				$this->logger->info($this->language->translate(KnownTranslationFactory::pocketmine_server_query_running($prettyIp, (string) $port)));
+			}
 		}
 		return true;
 	}
