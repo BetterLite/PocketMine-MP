@@ -29,6 +29,7 @@ use pocketmine\event\Cancellable;
 use pocketmine\event\CancellableTrait;
 use pocketmine\utils\Utils;
 use pocketmine\world\Position;
+use function array_filter;
 
 /**
  * Called when an entity explodes, after the explosion's impact has been calculated.
@@ -79,7 +80,11 @@ class EntityExplodeEvent extends EntityEvent implements Cancellable{
 	 */
 	public function setBlockList(array $blocks) : void{
 		Utils::validateArrayValueType($blocks, function(Block $_) : void{});
-		$this->blocks = $blocks;
+		$world = $this->entity->getWorld();
+		$this->blocks = array_filter($blocks, static function(Block $block) use ($world) : bool{
+			$position = $block->getPosition();
+			return $position->getWorld() === $world && $world->isInWorld($position->x, $position->y, $position->z);
+		});
 	}
 
 	/**
@@ -108,7 +113,11 @@ class EntityExplodeEvent extends EntityEvent implements Cancellable{
 	 */
 	public function setIgnitions(array $ignitions) : void{
 		Utils::validateArrayValueType($ignitions, fn(Block $block) => null);
-		$this->ignitions = $ignitions;
+		$world = $this->entity->getWorld();
+		$this->ignitions = array_filter($ignitions, static function(Block $block) use ($world) : bool{
+			$position = $block->getPosition();
+			return $position->getWorld() === $world && $world->isInWorld($position->x, $position->y, $position->z);
+		});
 	}
 
 	/**

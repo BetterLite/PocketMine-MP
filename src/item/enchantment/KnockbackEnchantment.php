@@ -25,6 +25,7 @@ namespace pocketmine\item\enchantment;
 
 use pocketmine\entity\Entity;
 use pocketmine\entity\Living;
+use pocketmine\event\entity\EntityDamageByEntityEvent;
 
 class KnockbackEnchantment extends MeleeWeaponEnchantment{
 
@@ -40,6 +41,14 @@ class KnockbackEnchantment extends MeleeWeaponEnchantment{
 		if($victim instanceof Living){
 			$diff = $victim->getPosition()->subtractVector($attacker->getPosition());
 			$victim->knockBack($diff->x, $diff->z, $enchantmentLevel * 0.5);
+		}
+	}
+
+	public function onPostAttackWithDamageEvent(EntityDamageByEntityEvent $event, Entity $attacker, Entity $victim, int $enchantmentLevel) : void{
+		if($victim instanceof Living){
+			$diff = $victim->getPosition()->subtractVector($attacker->getPosition());
+			$force = $enchantmentLevel * 0.5 * ($event->getKnockBack() / Living::DEFAULT_KNOCKBACK_FORCE);
+			$victim->knockBack($diff->x, $diff->z, $force);
 		}
 	}
 }
